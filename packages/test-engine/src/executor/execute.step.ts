@@ -1,5 +1,6 @@
 import { expect, type Page } from "@playwright/test";
 import type { TestStep } from "@ai-tester/shared";
+import { assertSafeUrl } from "@ai-tester/browser";
 
 import { getLocator } from "./locator.js";
 import { resolveValue } from "./variables.js";
@@ -17,9 +18,14 @@ export async function executeStep(
   const timeoutOption = timeout === undefined ? {} : { timeout };
 
   switch (step.action) {
-    case "goto":
-      await page.goto(resolveValue(step.url), timeoutOption);
+    case "goto": {
+      // Step URLs are model-authored, so they get the same SSRF guard as the
+      // URL the user submitted.
+      const url = await assertSafeUrl(resolveValue(step.url));
+
+      await page.goto(url.href, timeoutOption);
       return;
+    }
 
     case "click":
       await getLocator(page, step.target).click(timeoutOption);

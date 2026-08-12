@@ -15,6 +15,7 @@
     "test": "vitest run --passWithNoTests"
   },
   "dependencies": {
+    "@ai-tester/browser": "workspace:*",
     "@ai-tester/shared": "workspace:*",
     "@playwright/test": "^1.62.1"
   },

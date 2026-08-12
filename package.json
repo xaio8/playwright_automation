@@ -7,7 +7,7 @@
     "dev:web": "pnpm --filter @ai-tester/web dev",
     "dev:api": "pnpm --filter @ai-tester/api dev",
     "dev:worker": "pnpm --filter @ai-tester/worker dev",
-    "lint": "pnpm -r --if-present lint",
+    "lint": "eslint . && pnpm -r --if-present lint",
     "typecheck": "pnpm -r --if-present typecheck",
     "test": "pnpm -r --if-present test",
     "build": "pnpm -r --if-present build"
@@ -21,5 +21,12 @@
       "version": "^11.21.0",
       "onFail": "download"
     }
+  },
+  "devDependencies": {
+    "@eslint/js": "^10.0.1",
+    "eslint": "^10.8.0",
+    "globals": "^17.7.0",
+    "typescript": "6.0.3",
+    "typescript-eslint": "^8.65.0"
   }
 }
