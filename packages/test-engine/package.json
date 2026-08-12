@@ -1,0 +1,15 @@
+{
+  "name": "@ai-tester/test-engine",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "dependencies": {
+    "@ai-tester/shared": "workspace:*"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.61.1"
+  }
+}

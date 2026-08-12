@@ -1,0 +1,21 @@
+{
+  "name": "ai-playwright-tester",
+  "version": "1.0.0",
+  "private": "true",
+  "scripts": {
+    "dev:web": "pnpm --filter @ai-tester/web dev",
+    "dev:api": "pnpm --filter @ai-tester/api dev",
+    "dev:worker": "pnpm --filter @ai-tester/worker dev"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devEngines": {
+    "packageManager": {
+      "name": "pnpm",
+      "version": "^11.21.0",
+      "onFail": "download"
+    }
+  },
+  "type": "module"
+}
