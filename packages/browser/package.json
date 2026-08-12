@@ -1,5 +1,5 @@
 {
-  "name": "@ai-tester/shared",
+  "name": "@ai-tester/browser",
   "version": "1.0.0",
   "private": true,
   "type": "module",
@@ -15,11 +15,12 @@
     "test": "vitest run --passWithNoTests"
   },
   "dependencies": {
-    "zod": "^4.4.3"
+    "@ai-tester/shared": "workspace:*",
+    "playwright": "^1.62.1"
   },
   "devDependencies": {
+    "@types/node": "^24.13.3",
     "typescript": "6.0.3",
-    "vitest": "^4.1.10",
-    "@types/node": "^24.13.3"
+    "vitest": "^4.1.10"
   }
 }

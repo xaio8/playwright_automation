@@ -1,11 +1,16 @@
 {
   "name": "ai-playwright-tester",
   "version": "1.0.0",
-  "private": "true",
+  "private": true,
+  "type": "module",
   "scripts": {
     "dev:web": "pnpm --filter @ai-tester/web dev",
     "dev:api": "pnpm --filter @ai-tester/api dev",
-    "dev:worker": "pnpm --filter @ai-tester/worker dev"
+    "dev:worker": "pnpm --filter @ai-tester/worker dev",
+    "lint": "pnpm -r --if-present lint",
+    "typecheck": "pnpm -r --if-present typecheck",
+    "test": "pnpm -r --if-present test",
+    "build": "pnpm -r --if-present build"
   },
   "keywords": [],
   "author": "",
@@ -16,6 +21,5 @@
       "version": "^11.21.0",
       "onFail": "download"
     }
-  },
-  "type": "module"
+  }
 }
