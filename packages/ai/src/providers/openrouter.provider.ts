@@ -3,7 +3,7 @@ import type { ChatClient } from "../chat-client.js";
 import type { ProviderConfig } from "../provider.js";
 
 export const OPENROUTER_ID = "openrouter";
-export const OPENROUTER_DEFAULT_MODEL = "google/gemini-2.5-flash";
+export const OPENROUTER_DEFAULT_MODEL = "nvidia/nemotron-3-ultra-550b-a55b:free";
 
 export function createOpenRouterProvider(
   config: ProviderConfig,

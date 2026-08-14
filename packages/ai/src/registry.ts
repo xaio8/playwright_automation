@@ -45,7 +45,8 @@ export function configFromEnv(
     id,
     apiKey: overrides.apiKey ?? env[`${envPrefix}_API_KEY`],
     model: overrides.model ?? env.AI_MODEL,
-    baseUrl: overrides.baseUrl ?? env[`${envPrefix}_BASE_URL`] ?? env.AI_BASE_URL,
+    baseUrl:
+      overrides.baseUrl ?? env[`${envPrefix}_BASE_URL`] ?? env.AI_BASE_URL,
     headers: overrides.headers,
   };
 }

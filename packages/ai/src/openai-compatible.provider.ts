@@ -102,12 +102,12 @@ export class OpenAiCompatibleProvider implements AiProvider {
 
     return [
       { type: "text", text },
-      {
-        type: "image_url",
-        image_url: {
-          url: `data:${input.screenshot.mimeType};base64,${input.screenshot.base64}`,
-        },
-      },
+      // {
+      //   type: "image_url",
+      //   image_url: {
+      //     url: `data:${input.screenshot.mimeType};base64,${input.screenshot.base64}`,
+      //   },
+      // },
     ];
   }
 }

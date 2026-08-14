@@ -45,9 +45,9 @@ export class OpenAiChatClient implements ChatClient {
     }
 
     this.client = new OpenAI({
-      apiKey: config.apiKey,
       baseURL: config.baseUrl,
-      defaultHeaders: config.headers,
+      apiKey: config.apiKey,
+      // defaultHeaders: config.headers,
     });
   }
 
