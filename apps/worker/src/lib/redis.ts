@@ -13,3 +13,5 @@ export const redis = new Redis({
 
 // Subscriber: for listening to worker events (SSE to browser)
 export const redisSub = new Redis(config);
+
+export const redisPub = new Redis(config);

@@ -1,25 +1,37 @@
-// worker/src/processors/execution.ts
-
 import type { Job } from "bullmq";
 import { redisPub } from "../lib/redis.js";
-import { executionStore } from "../lib/store.js";
+import { redisKeys } from "@ai-tester/shared";
+import { executionStore, generationStore } from "../lib/store.js";
 import { executePlan } from "../pipeline.js";
 import type { ExecutionJobData } from "@ai-tester/shared";
 import type { ExecutionEvent } from "@ai-tester/shared";
-import type { CaseResult } from "@ai-tester/shared";
-import { redisKeys } from "@ai-tester/shared";
+import type {  CaseResult } from "@ai-tester/shared";
 
 function emit(id: string, event: ExecutionEvent) {
   redisPub.publish(redisKeys.executionEvents(id), JSON.stringify(event));
 }
 
 export async function processExecution(job: Job<ExecutionJobData>) {
-  const { executionId, generationId, caseTitles, plan } = job.data;
+  const { executionId, request } = job.data;
+  const { generationId, caseTitles } = request;
 
   try {
     await executionStore.updateState(executionId, "running");
 
-    // Filter cases if specific ones requested
+    // ─── Fetch Plan from Redis ─────────────────────────────
+    const generation = await generationStore.get(generationId);
+
+    if (!generation) {
+      throw new Error(`Generation ${generationId} not found in Redis`);
+    }
+
+    if (!generation.plan) {
+      throw new Error(`Generation ${generationId} has no test plan`);
+    }
+
+    const plan = generation.plan;
+
+    // ─── Filter Cases if Requested ─────────────────────────
     const casesToRun = caseTitles
       ? {
           ...plan,
@@ -32,47 +44,51 @@ export async function processExecution(job: Job<ExecutionJobData>) {
     let passed = 0;
     let failed = 0;
 
-    //  Execute with Event Forwarding 
+    // ─── Execute ───────────────────────────────────────────
     const results: CaseResult[] = await executePlan(casesToRun, (event) => {
-      // Forward events from runTestPlan directly to Redis
-      // Your runTestPlan emits: case-start, step, case-end, done
+      switch (event.type) {
+        case "case-start":
+          emit(executionId, { type: "case-start", title: event.title });
+          break;
 
-      if (event.type === "case-start") {
-        emit(executionId, { type: "case-start", title: event.title });
-      }
+        case "step":
+          emit(executionId, {
+            type: "step",
+            title: event.title,
+            stepIndex: event.stepIndex,
+            status: event.status,
+            error: event.error,
+          });
+          break;
 
-      if (event.type === "step") {
-        emit(executionId, {
-          type: "step",
-          title: event.title, // Make sure this matches your schema
-          stepIndex: event.stepIndex,
-          status: event.status,
-          error: event.error,
-        });
-      }
+        case "case-end": {
+          const { status } = event.result;
+          if (status === "passed") passed++;
+          else failed++;
 
-      if (event.type === "case-end") {
-        const result = event.result;
-        if (result.status === "passed") passed++;
-        else failed++;
-
-        emit(executionId, { type: "case-end", result });
-      }
-
-      if (event.type === "done") {
-        // We'll emit our own "done" after executePlan resolves
+          emit(executionId, { type: "case-end", result: event.result });
+          break;
+        }
       }
     });
 
-    //  Done 
+    // ─── Done ──────────────────────────────────────────────
     await executionStore.setDone(executionId, results, failed === 0);
     emit(executionId, { type: "done", passed, failed });
 
     console.log(
-      `✅ Execution ${executionId} completed: ${passed} passed, ${failed} failed`,
+      `✅ Execution ${executionId}: ${passed} passed, ${failed} failed`,
     );
   } catch (err) {
     await executionStore.updateState(executionId, "failed");
+
+    // Emit error event so frontend knows
+    emit(executionId, {
+      type: "done",
+      passed: 0,
+      failed: 0,
+    });
+
     console.error(`❌ Execution ${executionId} failed:`, err);
     throw err;
   }

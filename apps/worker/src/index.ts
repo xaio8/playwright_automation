@@ -4,13 +4,13 @@ import dotenv from "dotenv";
 dotenv.config({ path: path.resolve(process.cwd(), "../../.env") });
 
 import { generationWorker, executionWorker } from "./lib/queues.js";
-import { processGeneration } from "./processors/generation.js";
-import { processExecution } from "./processors/execution.js";
+// import { processGeneration } from "./processors/generation.js";
+// import { processExecution } from "./processors/execution.js";
 
 //  Register Handlers 
 
-generationWorker.on("process", processGeneration);
-executionWorker.on("process", processExecution);
+// generationWorker.on("process", processGeneration);
+// executionWorker.on("process", processExecution);
 
 //  Logging 
 
